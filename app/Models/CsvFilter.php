@@ -21,7 +21,7 @@ class CsvFilter
             return $query->whereBetween('birth_date', [now()->subYears($age + 1), now()->subYears($age)]);
         });
         $query->when($ageBetween, function ($query, $ageBetween) {
-            if (!str_contains('-', $ageBetween))
+            if (!str_contains($ageBetween, '-'))
                 return;
             list($ageMin, $ageMax) = explode('-', $ageBetween, 2);
             if ((int)$ageMin && (int)$ageMax)
