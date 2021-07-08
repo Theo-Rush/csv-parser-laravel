@@ -8,21 +8,23 @@ class CsvFilter
 {
     use HasFactory;
 
-    public function createQueryFromFilters($input)
+    public function createQueryFromRequest($request)
     {
-        $age = $input->filled('age') ? $input->query('age') : null;
-        $ageBetween = $input->filled('ageBetween') ? $input->query('ageBetween') : null;
-        $category = $input->filled('category') ? $input->query('category') : null;
-        $gender = $input->filled('gender') ? $input->query('gender') : null;
-        $dob = $input->filled('dob') ? $input->query('dob') : null;
+        $age = $request->input('age', null);
+        $ageBetween = $request->input('ageBetween', null);
+        $category = $request->input('category', null);
+        $gender = $request->input('gender', null);
+        $dob = $request->input('dob', null);
 
         $query = MockUser::with('category');
         $query->when($age, function ($query, $age) {
             return $query->whereBetween('birth_date', [now()->subYears($age + 1), now()->subYears($age)]);
         });
         $query->when($ageBetween, function ($query, $ageBetween) {
+            if (!str_contains('-', $ageBetween))
+                return;
             list($ageMin, $ageMax) = explode('-', $ageBetween, 2);
-            if ($ageMin && $ageMax)
+            if ((int)$ageMin && (int)$ageMax)
                 return $query->whereBetween('birth_date', [now()->subYears($ageMax), now()->subYears($ageMin)]);
             return;
         });
