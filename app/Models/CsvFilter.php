@@ -4,13 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-
 class CsvFilter
 {
     use HasFactory;
-    public $builder;
 
-    public function __construct($input)
+    public function createQueryFromFilters($input)
     {
         $age = $input->filled('age') ? $input->query('age') : null;
         $ageBetween = $input->filled('ageBetween') ? $input->query('ageBetween') : null;
@@ -40,6 +38,6 @@ class CsvFilter
             return $query->whereDate('birth_date', $dob);
         });
 
-        $this->builder = $query;
+        return $query;
     }
 }

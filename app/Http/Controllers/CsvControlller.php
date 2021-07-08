@@ -10,6 +10,12 @@ use App\Models\MockUser;
 
 class CsvControlller extends Controller
 {
+    private $csvFilter;
+    public function __construct(CsvFilter $csvFilter)
+    {
+        $this->csvFilter = $csvFilter;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -42,8 +48,7 @@ class CsvControlller extends Controller
 
     public function download(Request $request)
     {
-        $csvFilter = new CsvFilter($request);
-        $dataset = $csvFilter->builder->get();
+        $dataset = $this->csvFilter->createQueryFromFilters($request)->paginate(6);
 
         $content = "category,firstname,lastname,email,gender,birthDate";
         foreach ($dataset as $datarow) {
@@ -66,8 +71,7 @@ class CsvControlller extends Controller
 
     public function filter(Request $request)
     {
-        $csvFilter = new CsvFilter($request);
-        $dataset = $csvFilter->builder->paginate(6);
+        $dataset = $this->csvFilter->createQueryFromFilters($request)->paginate(6);
         return view('csv.index')->with('dataset', $dataset);
     }
 }
