@@ -4,18 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Http\Request;
 
 class CsvFilter
 {
     use HasFactory;
 
-    public function createQueryFromRequest($request) : Builder
+    public function createQueryFromRequest(Array $request) : Builder
     {
-        $age = $request->input('age', null);
-        $ageBetween = $request->input('ageBetween', null);
-        $category = $request->input('category', null);
-        $gender = $request->input('gender', null);
-        $dob = $request->input('dob', null);
+        $age = $request['age'] ?? null;
+        $ageBetween = $request['ageBetween'] ?? null;
+        $category = $request['category'] ?? null;
+        $gender = $request['gender'] ?? null;
+        $dob = $request['dob'] ?? null;
 
         $query = MockUser::with('category');
         $query->when($age, function ($query, $age) {

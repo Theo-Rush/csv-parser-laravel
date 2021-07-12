@@ -22,7 +22,7 @@ class Csv
     public $errors = [];
     private $is_valid = true;
 
-    public function __construct($filename)
+    public function __construct(string $filename)
     {
         $this->rows = array_map('str_getcsv', file(public_path('uploads/' . $filename)));
         array_shift($this->rows); // file headers don't coincide with DB columns anyway
@@ -36,7 +36,7 @@ class Csv
         return $this->is_valid;
     }
 
-    private function prepareValidation() : void
+    private function prepareValidation() : mixed
     {
         foreach ($this->rows as $i => $row) {
             if (!$this->checkRowIntegrity($i + 2, $row))
@@ -51,7 +51,7 @@ class Csv
         }
     }
 
-    private function checkRowIntegrity($line, $data) : bool
+    private function checkRowIntegrity(int $line, array $data) : bool
     {
         if (count($data) != 6) {
             $this->errors["Row #$line"][] = "Some data is missing/Extra fields found";
@@ -61,7 +61,7 @@ class Csv
         return true;
     }
 
-    private function checkDOB($line, $date) : void
+    private function checkDOB(int $line, array $date) : void
     {
         try {
             Carbon::parse($date);
@@ -91,7 +91,7 @@ class Csv
         }
     }
 
-    public function save()
+    public function save() : void
     {
         $categoriesMap = [];
 

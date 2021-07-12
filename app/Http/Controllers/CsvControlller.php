@@ -48,7 +48,7 @@ class CsvControlller extends Controller
 
     public function download(Request $request)
     {
-        $dataset = $this->csvFilter->createQueryFromRequest($request)->paginate(6);
+        $dataset = $this->csvFilter->createQueryFromRequest($request->except('page'))->get();
 
         $content = "category,firstname,lastname,email,gender,birthDate";
         foreach ($dataset as $datarow) {
@@ -71,7 +71,7 @@ class CsvControlller extends Controller
 
     public function filter(Request $request)
     {
-        $dataset = $this->csvFilter->createQueryFromRequest($request)->paginate(6);
+        $dataset = $this->csvFilter->createQueryFromRequest($request->all())->paginate(6);
         return view('csv.index')->with('dataset', $dataset);
     }
 }
