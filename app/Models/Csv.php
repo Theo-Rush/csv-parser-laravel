@@ -28,7 +28,7 @@ class Csv
         array_shift($this->rows); // file headers don't coincide with DB columns anyway
     }
 
-    public function validate()
+    public function validate() : bool
     {
         $this->prepareValidation();
         if ($this->is_valid)
@@ -36,7 +36,7 @@ class Csv
         return $this->is_valid;
     }
 
-    private function prepareValidation()
+    private function prepareValidation() : void
     {
         foreach ($this->rows as $i => $row) {
             if (!$this->checkRowIntegrity($i + 2, $row))
@@ -51,7 +51,7 @@ class Csv
         }
     }
 
-    private function checkRowIntegrity($line, $data)
+    private function checkRowIntegrity($line, $data) : bool
     {
         if (count($data) != 6) {
             $this->errors["Row #$line"][] = "Some data is missing/Extra fields found";
@@ -61,7 +61,7 @@ class Csv
         return true;
     }
 
-    private function checkDOB($line, $date)
+    private function checkDOB($line, $date) : void
     {
         try {
             Carbon::parse($date);
@@ -71,7 +71,7 @@ class Csv
         }
     }
 
-    private function checkEmailsList()
+    private function checkEmailsList() : void
     {
         foreach ($this->emails as $email => $occurences) {
             $errorLine = "Row #" . implode(',', array_values($occurences));
@@ -93,17 +93,17 @@ class Csv
 
     public function save()
     {
-        $categories_map = [];
+        $categoriesMap = [];
 
         foreach ($this->rows as $row) {
             // making categories list
-            $category_name = array_shift($row);
+            $categoryName = array_shift($row);
 
-            if (!key_exists($category_name, $categories_map)) {
-                $category = Category::create(['name' => $category_name]);
-                $categories_map[$category_name] = $category->id;
+            if (!key_exists($categoryName, $categoriesMap)) {
+                $category = Category::create(['name' => $categoryName]);
+                $categoriesMap[$categoryName] = $category->id;
             }
-            $row[] = $categories_map[$category_name];
+            $row[] = $categoriesMap[$categoryName];
             $userData = array_combine($this->userFields, $row);
             MockUser::create($userData);
         }

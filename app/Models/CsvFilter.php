@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CsvFilter
 {
     use HasFactory;
 
-    public function createQueryFromRequest($request)
+    public function createQueryFromRequest($request) : Builder
     {
         $age = $request->input('age', null);
         $ageBetween = $request->input('ageBetween', null);
